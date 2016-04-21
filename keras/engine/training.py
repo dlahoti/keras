@@ -1489,12 +1489,12 @@ class Model(Container):
         _stop.set()
         if type(outs) is not list:
             return np.average(np.asarray(all_outs),
-                              weights=weights)
+                              weights=weights, axis=0)
         else:
             averages = []
             for i in range(len(outs)):
                 averages.append(np.average([out[i] for out in all_outs],
-                                weights=weights))
+                                           weights=weights, axis=0))
             return averages
 
     def predict_generator(self, generator, val_samples, max_q_size=10):

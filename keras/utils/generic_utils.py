@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 import numpy as np
 import time
+import collections
 import sys
 import six
 
@@ -98,7 +99,12 @@ class Progbar(object):
                 info += ' - %s:' % k
                 if type(self.sum_values[k]) is list:
                     avg = self.sum_values[k][0] / max(1, self.sum_values[k][1])
-                    if abs(avg) > 1e-3:
+                    if isinstance(avg, collections.Iterable):
+                        info += ' ['
+                        for avg_p in avg:
+                            info += ' %.4f' % avg_p
+                        info += ']'
+                    elif abs(avg) > 1e-3:
                         info += ' %.4f' % avg
                     else:
                         info += ' %.4e' % avg

@@ -1,6 +1,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 
+import collections
 import numpy as np
 import time
 import json
@@ -376,14 +377,17 @@ class RemoteMonitor(Callback):
         send = {}
         send['epoch'] = epoch
         for k, v in logs.items():
-            send[k] = v
-
+            if isinstance(v, collections.Iterable):
+                for i, v_i in enumerate(v):
+                    send['%s_%d' % (k, i)] = float(v_i)
+            else:
+                send[k] = v
         try:
             requests.post(self.root + '/publish/epoch/end/',
                           {'data': json.dumps(send)})
-        except:
+        except requests.RequestException as e:
             print('Warning: could not reach RemoteMonitor '
-                  'root server at ' + str(self.root))
+                  'root server at ' + str(self.root) + ': ' + e.message)
 
 
 class LearningRateScheduler(Callback):
