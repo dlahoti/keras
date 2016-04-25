@@ -594,7 +594,7 @@ class Dense(Layer):
 
         self.regularizers = []
         if self.W_regularizer:
-            self.W_regularizer.set_param(self.W)
+            self.W_regularizer.set_param(self.W, input_dim, self.output_dim)
             self.regularizers.append(self.W_regularizer)
 
         if self.b_regularizer:

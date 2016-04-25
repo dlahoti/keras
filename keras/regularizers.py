@@ -3,8 +3,10 @@ from . import backend as K
 
 
 class Regularizer(object):
-    def set_param(self, p):
+    def set_param(self, p, input_dim=None, output_dim=None):
         self.p = p
+        self.input_dim = input_dim
+        self.output_dim = output_dim
 
     def set_layer(self, layer):
         self.layer = layer
@@ -22,8 +24,6 @@ class WeightRegularizer(Regularizer):
         self.l2 = K.cast_to_floatx(l2)
         self.uses_learning_phase = True
 
-    def set_param(self, p):
-        self.p = p
 
     def __call__(self, loss):
         if not hasattr(self, 'p'):
