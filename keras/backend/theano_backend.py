@@ -471,7 +471,7 @@ def spatial_3d_padding(x, padding=(1, 1, 1), dim_ordering='th'):
 
 
 def pack(x):
-    return T.stack(*x)
+    return T.stack(x, axis=0)  # Note: T.stack(*x) is deprecated, see T.stack docstring.
 
 # VALUE MANIPULATION
 
