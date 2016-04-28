@@ -387,7 +387,7 @@ class RemoteMonitor(Callback):
                           {'data': json.dumps(send)})
         except requests.RequestException as e:
             print('Warning: could not reach RemoteMonitor '
-                  'root server at ' + str(self.root) + ': ' + e.message)
+                  'root server at ' + str(self.root) + ': ' + str(e.message))
 
 
 class LearningRateScheduler(Callback):
