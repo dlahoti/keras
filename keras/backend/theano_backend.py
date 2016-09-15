@@ -558,6 +558,29 @@ def squeeze(x, axis):
     return T.reshape(x, tuple(shape))
 
 
+def temporal_pre_padding(x, padding=1):
+    '''Prepend the middle dimension of a 3D tensor
+    with "padding" zeros.
+    '''
+    input_shape = x.shape
+    output_shape = (input_shape[0],
+                    input_shape[1] + padding,
+                    input_shape[2])
+    output = T.zeros(output_shape)
+    return T.set_subtensor(output[:, padding:x.shape[1] + padding, :], x)
+
+
+def temporal_post_padding(x, padding=1):
+    '''Append the middle dimension of a 3D tensor
+    with "padding" zeros.
+    '''
+    input_shape = x.shape
+    output_shape = (input_shape[0],
+                    input_shape[1] + padding,
+                    input_shape[2])
+    output = T.zeros(output_shape)
+    return T.set_subtensor(output[:, 0:x.shape[1] + padding, :], x)
+
 def temporal_padding(x, padding=1):
     '''Pad the middle dimension of a 3D tensor
     with "padding" zeros left and right.
