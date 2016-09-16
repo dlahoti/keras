@@ -617,9 +617,9 @@ class AtrousConvolution1D(Convolution1D):
                  bias=True, input_dim=None, input_length=None, causal=False, **kwargs):
 
         if border_mode not in {'valid', 'same'}:
-            raise Exception('Invalid border mode for AtrousConv2D:', border_mode)
+            raise Exception('Invalid border mode for AtrousConv1D:', border_mode)
 
-        self.atrous_rate = (atrous_rate, 1)
+        self.atrous_rate = (atrous_rate, atrous_rate)
         if causal and border_mode != 'valid':
             raise ValueError("Causal Convolution requires border_mode='valid'.")
         self.causal = causal
@@ -636,7 +636,7 @@ class AtrousConvolution1D(Convolution1D):
     def get_output_shape_for(self, input_shape):
         input_length = input_shape[1]
         if self.causal:
-            input_length += self.atrous_rate[0]
+            input_length += self.atrous_rate[0] * (self.filter_length - 1)
         length = conv_output_length(input_length,
                                     self.filter_length,
                                     self.border_mode,
@@ -646,7 +646,7 @@ class AtrousConvolution1D(Convolution1D):
 
     def call(self, x, mask=None):
         if self.causal:
-            x = K.temporal_pre_padding(x, self.atrous_rate[0])
+            x = K.temporal_pre_padding(x, self.atrous_rate[0] * (self.filter_length - 1) )
         x = K.expand_dims(x, -1)  # add a dimension of the right
         x = K.permute_dimensions(x, (0, 2, 1, 3))
         output = K.conv2d(x, self.W, strides=self.subsample,
@@ -661,8 +661,8 @@ class AtrousConvolution1D(Convolution1D):
         return output
 
     def get_config(self):
-        config = {'atrous_rate': self.atrous_rate}
-        config = {'causal': self.causal}
+        config = {'atrous_rate': self.atrous_rate,
+                  'causal': self.causal}
         base_config = super(AtrousConvolution1D, self).get_config()
         return dict(list(base_config.items()) + list(config.items()))
 
